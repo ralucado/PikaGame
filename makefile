@@ -1,4 +1,4 @@
-LIBS=-lsfml-graphics -lsfml-window -lsfml-system
+LIBS=-lsfml-graphics -lsfml-window -lsfml-audio -lsfml-system
 
 all:
 	g++ -c main.cc
