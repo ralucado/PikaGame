@@ -17,12 +17,13 @@ int main(){
 	int speed = 100, speed2 = 100;
 	float time_to_next_sprite = 0.09;
 	enum direction { down, left, right, up , none};
-	const int mx[5] = {0,	-1,    1,	 0,   0};
-	const int my[5] = {1,	 0,	   0,	-1,   0};
+	const int mx[5] = {0,	-1,    1,   0,   0};
+	const int my[5] = {1,	 0,    0,  -1,   0};
 
 	//'VECTOR2's
 	sf::Vector2f spriteSize(28,28);
 	sf::Vector2f spriteSize2(28,28);
+	sf::Vector2f shotSize(462,23);
 	sf::Vector2f melocSize(16,14);
 	sf::Vector2f zumoSize(14,14);
 	sf::Vector2i spriteSource(0,down);
@@ -34,10 +35,10 @@ int main(){
 	std::vector<std::pair<int, sf::Sprite> > bayas;
 	//SFML OBJECTS
 	sf::Event event;
-	sf::Clock deltaClock, melocClock, zumoClock, zumo2Clock, pokeClock, poke2Clock, spawnClock;
+	sf::Clock deltaClock, melocClock, zumoClock, zumo2Clock, pokeClock, poke2Clock, spawnClock, shotClock, shotClock2, parClock, shotTimer, shotTimer2;
 	sf::Image image;
-	sf::Sprite player, player2, background, meloc, zumo, stone, pokeball, zreza;
-	sf::Texture tplayer, tplayer2, tbackground, tmeloc, tzumo, tstone, tpokeball, tzreza;
+	sf::Sprite player, player2, background, meloc, zumo, stone, pokeball, zreza, shot, shot2;
+	sf::Texture tplayer, tplayer2, tbackground, tmeloc, tzumo, tstone, tpokeball, tzreza, tshot;
 
 	//LOAD TEXTURES
 	if(!image.loadFromFile("map.png")) std::cout << "collision map not loaded" << std::endl;
@@ -49,6 +50,8 @@ int main(){
 	if(!tbackground.loadFromFile("ground.png")) std::cout << "background texture Not Loaded " << std::endl;
 	if(!tplayer.loadFromFile("pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
 	if(!tplayer2.loadFromFile("pikachu.png")) std::cout << "personatge2 Not Loaded " << std::endl;
+	if(!tshot.loadFromFile("shot.png")) std::cout << "shot Not Loaded " << std::endl;
+
 	spriteSize.x = originalSpriteSize.x = tplayer.getSize().x/4;
 	spriteSize.y = originalSpriteSize.y = tplayer.getSize().y/4;
 
@@ -56,11 +59,11 @@ int main(){
 	spriteSize2.y = originalSpriteSize2.y = tplayer2.getSize().y/4;
 
 	//VARIABLES
-	int melocCount = 0;
-	bool speedup = false, speedup2 = false, raichu = false, raichu2 = false, poke=false, poke2 = false;
+	int melocCount = 0, melocCount2 = 0;
+	bool speedup = false, speedup2 = false, raichu = false, raichu2 = false, poke=false, poke2 = false, par = false, par2 = false;
 	direction d = none, q = none;
+	float deltatime = 0, movx = 0.0, movy = 0.0, movx2 = 0.0, movy2 = 0.0, scont = 0.0, scont2 = 0.0;
 	bool keypressed = false;
-	float deltatime = 0, movx = 0.0, movy = 0.0, scont = 0.0, scont2 = 0.0, movx2 = 0.0, movy2 = 0.0;
 	float distx = spriteSize.x/4, disty = spriteSize.y/4, distx2 = spriteSize2.x/4, disty2 = spriteSize2.y/4;
 
 	//Set player's properties
@@ -70,11 +73,15 @@ int main(){
 	player2.setTexture(tplayer2);
 	player2.setPosition(playerPosition2);
 
+	shot.setTexture(tshot);
+	shot2.setTexture(tshot);
+
 	//Set Background's properties
 	background.setTexture(tbackground);
-
+	bool shoot = false, shoot2 = false;
 
 	//CREATE THE WINDOW
+	direction lastDir = down, lastDir2 = down;
 	sf::RenderWindow window(sf::VideoMode(639, 480), "Pika!");
 	std::cout << "Howdy fellow trainer! Here's your chance to help Pikachu" << std::endl
 	<< "collect all the Pechaberries he can get!" << std::endl
@@ -84,10 +91,11 @@ int main(){
 	<< "Although no one has seen it yet, some say a mighty stone could appear" << std::endl
 	<< "and turn Pikachu into an even more powerfull creature. Keep your eyes wide open." << std::endl
 	<< "Your score will appear down here, good luck!" << std::endl;
-
-	sf::Music music;
+ 	//descomentar4music
+	/*sf::Music music;
 	if (!music.openFromFile("pikaGirl.wav")) std::cout << "couldnt load music" << std::endl; // error
-	music.play();
+	music.play();*/
+
 	//GAME LOOP
 	while(window.isOpen()){
 
@@ -105,16 +113,18 @@ int main(){
 						window.close();
 					}/*
 					//Increasing Speed
-					if (event.key.code == sf::Keyboard::S) {
+					if (event.key.code == sf::Keyboard::P) {
 						if(speed < 280){
 							speed += 20;
+							speed2 += 20;
 							time_to_next_sprite -= 0.01;
 						}
 					}
 					//Decreasing Speed
-					if (event.key.code == sf::Keyboard::D) {
+					if (event.key.code == sf::Keyboard::O) {
 						if(speed > 80){
 							speed -= 20;
+							speed2 -= 20;
 							time_to_next_sprite += 0.01;
 						}
 					}*/
@@ -137,16 +147,18 @@ int main(){
 			spriteSize2.x = originalSpriteSize.x = tplayer2.getSize().x/4;
 			spriteSize2.y = originalSpriteSize.y = tplayer2.getSize().y/4;
 		}
+		if (par and parClock.getElapsedTime().asSeconds() >= 3) par = false;
+		if (par2 and parClock.getElapsedTime().asSeconds() >= 3) par2 = false;
 		if (zumoClock.getElapsedTime().asSeconds() >= 10) speedup = false;
 		if (zumo2Clock.getElapsedTime().asSeconds() >= 10) speedup2 = false;
 
-		if(poke) speed = 20;
-		else if (speedup) speed = 240;
+		if(poke or par) speed = 20;
+		else if (speedup) speed = 220;
 		else if(raichu) speed = 150;
 		else speed = 100;
 
-		if(poke2) speed2 = 20;
-		else if (speedup2) speed2 = 240;
+		if(poke2 or par2) speed2 = 20;
+		else if (speedup2) speed2 = 220;
 		else speed2 = 100;
 
 		//Deltatime 
@@ -156,23 +168,59 @@ int main(){
 
 		//Update Direction 'd'
 		d = none;
-
+		bool can_shoot = shotClock.getElapsedTime().asSeconds() >= 2;
+		bool can_shoot2 = shotClock2.getElapsedTime().asSeconds() >= 2;
 	        //By keyboard
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 	d = up;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))	d = down;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))	d = left;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))	d = right;
-
-
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))	{d = up;if (!shoot) 	lastDir = d;}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))	{d = down;if (!shoot) 	lastDir = d;}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))	{d = left;if (!shoot) 	lastDir = d;}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))	{d = right;if (!shoot) 	lastDir = d;}
 		
+
 		q = none;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) q = up;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))	q = down;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))	q = left;
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))	q = right;
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {q = up;if (!shoot2) 	lastDir2 = q;}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))	{q = down;if (!shoot2) 	lastDir2 = q;}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))	{q = left;if (!shoot2) 	lastDir2 = q;}
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))	{q = right;if (!shoot2) lastDir2 = q;}
+
+
+		//std::cout<<"TIMER----"<<shotTimer.getElapsedTime().asSeconds()<<std::endl;
+		//std::cout<<"-------------------CLOCK----"<<shotClock.getElapsedTime().asSeconds()<<std::endl;
+		if (can_shoot){
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+				shoot = true;
+				std::cout << "P1 tries to shoot" << std::endl;
+				shotClock.restart();
+			}
+			shotTimer.restart();
+		}
+		else if(shotTimer.getElapsedTime().asSeconds() >= 0.5){
+			shoot = false;
+		}
+		if (can_shoot2){
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)){
+				shoot2 = true;
+				std::cout << "P2 tries to shoot" << std::endl;
+				shotClock2.restart();
+			}
+			shotTimer2.restart();
+		}
+		else if(shotTimer2.getElapsedTime().asSeconds() >= 0.5){
+			shoot2 = false;
+		}
+
+
+
+/*
+		shotTimer.restart(); shoot = false; std::cout << "P1 HAS TO REST" << std::endl;}
+		else if(shotTimer.getElapsedTime().asSeconds() >= 2)){ shoot = true; shotClock.restart(); 
+			std::cout << "P1 tries to shoot" << std::endl;*/
+
+		if (poke or par) shoot = false;
+		if (poke2 or par2) shoot2 = false;
 
 		//If there is a direction
-		if(d != none){
+		if(not shoot and d != none){
 			//Set value to movement variables and update spritesource
 			if(spriteSource.y == d){
 				movx += mx[d]*speed*deltatime;
@@ -185,7 +233,7 @@ int main(){
 			}
 		}
 
-		if (q != none){
+		if (not shoot2 and q != none){
 			//Set value to movement variables and update spritesource
 			if(spriteSource2.y == q){
 				movx2 += mx[q]*speed2*deltatime;
@@ -205,7 +253,115 @@ int main(){
 		
 		int destix2 = playerPosition2.x+movx2;
 		int destiy2 = playerPosition2.y+movy2;
-		
+
+		sf::Vector2f shotPosition = playerPosition; //cambiar
+		sf::Vector2f shotPosition2 = playerPosition2; //cambiar
+
+		float rotation, rotation2/*, shotdistx, shotdisty*/;
+		/*shotdistx = playerPosition.x;
+		shotdisty = playerPosition.y;
+		while(isWhite(image,shotdistx,shotdisty)) {
+			
+			switch(lastDir){
+				case up:
+					--shotdisty;
+					break;
+				case down:
+					++shotdisty;
+					break;
+				case left:
+					--shotdistx;
+					break;
+				case right:
+					++shotdistx;
+					break;
+				default: break;
+			}
+		}*/
+		if (lastDir == up){
+			rotation = 90;
+			//shot.setScale(1, playerPosition.y-shotdisty/shotSize.y);
+			shotPosition.y = playerPosition.y - spriteSize.y;
+		}
+		else if (lastDir == down){
+			rotation = -90;
+			//shot.setScale(1, playerPosition.y-shotdisty/shotSize.y);
+		}
+		else if (lastDir == right){
+			rotation = 180;
+			shotPosition.x = playerPosition.x + spriteSize.x/2;
+			shotPosition.y -= spriteSize.y/2;
+			//shot.setScale(1, playerPosition.x-shotdistx/shotSize.y);
+		}
+		else{
+			rotation = 0;
+			shotPosition.x = playerPosition.x - spriteSize.x/2;
+			shotPosition.y -= spriteSize.y/2;
+			//shot.setScale(1, playerPosition.x-shotdistx/shotSize.y);
+		}
+
+
+		if (lastDir2 == up){
+			rotation2 = 90;
+			shotPosition2.y = playerPosition2.y - spriteSize2.y;
+		}
+		else if (lastDir2 == down)rotation2 = -90;
+		else if (lastDir2 == right){
+			rotation2 = 180;
+			shotPosition2.x = playerPosition2.x + spriteSize2.x/2;
+			shotPosition2.y -= spriteSize2.y/2;
+		}
+		else{
+			rotation2 = 0;
+			shotPosition2.x = playerPosition2.x - spriteSize2.x/2;
+			shotPosition2.y -= spriteSize2.y/2;
+		}/*
+		int shotdistance = 0, shotdistance2 = 0;
+		sf::Vector2f punt(0.0,0.0);
+		sf::Vector2f scale;
+		punt.x = image.getSize().x*playerPosition.x/tbackground.getSize().x/background.getScale().x;
+		punt.y = image.getSize().y*playerPosition.y/tbackground.getSize().y/background.getScale().y;
+		bool vertical = (lastDir == up or lastDir == down);
+		while (isWhite(image, punt.x, punt.y)){
+			shotdistance += 1;
+			if (vertical)
+				punt.x = image.getSize().x*(playerPosition.x+shotdistance)/tbackground.getSize().x/background.getScale().x;
+			else punt.y = image.getSize().y*(playerPosition.y+shotdistance)/tbackground.getSize().y/background.getScale().y;
+		}
+		if(vertical){
+			scale.x = 1;
+			scale.y = (shotdistance/shotSize.x);
+		}
+		else {
+			scale.y = 1;
+			scale.x = (shotdistance/shotSize.x);
+		}*/
+		shot.setOrigin(shotSize.x, shotSize.y/2);
+		//shot.scale(scale.x, scale.y);
+		shot.setPosition(shotPosition.x, shotPosition.y);
+		shot.setRotation(rotation);
+		/*
+		vertical = (lastDir2 == up or lastDir2 == down);
+		punt.x = image.getSize().x*playerPosition2.x/tbackground.getSize().x/background.getScale().x;
+		punt.y = image.getSize().y*playerPosition2.y/tbackground.getSize().y/background.getScale().y;
+		while (isWhite(image, punt.x, punt.y)){
+			shotdistance2 += 1.0;
+			if (vertical)
+				punt.x = image.getSize().x*(playerPosition2.x+shotdistance2)/tbackground.getSize().x/background.getScale().x;
+			else punt.y = image.getSize().y*(playerPosition2.y+shotdistance2)/tbackground.getSize().y/background.getScale().y;
+		}
+		if(vertical){
+			scale.x = 1;
+			scale.y = (shotdistance2/shotSize.x);
+		}
+		else {
+			scale.y = 1;
+			scale.x = (shotdistance2/shotSize.x);
+		}*/
+		shot2.setOrigin(shotSize.x, shotSize.y/2);
+		//shot.scale(scale.x, scale.y);
+		shot2.setPosition(shotPosition2.x, shotPosition2.y);
+		shot2.setRotation(rotation2);
 		
 		//Calcule the point in the image corresponding to the point the player is in the background
 		float px, py;
@@ -274,7 +430,6 @@ int main(){
 		
 		//Set window view, draw and display
 		window.draw(background);
-
 		if (melocClock.getElapsedTime().asSeconds() >= temps){
 			float melocX = rand()%639, melocY = rand()%480;
 			while (!isWhite(image, melocX, melocY)){
@@ -314,7 +469,7 @@ int main(){
 				bayas.push_back(std::make_pair(2,zreza));
 			}
 
-			if (spawn%69 == 0){
+			if (spawn%50 == 0){
 				float pokeballX = rand()%639, pokeballY = rand()%480;
 				while (!isWhite(image, pokeballX, pokeballY)){
 					pokeballX = rand()%639;
@@ -340,12 +495,14 @@ int main(){
 			}
 			spawnClock.restart();
 		}
+		if(shoot2 and player.getGlobalBounds().intersects(shot2.getGlobalBounds())){ par = true; parClock.restart();}
+		else if (shoot and player2.getGlobalBounds().intersects(shot.getGlobalBounds())){par2 = true; parClock.restart();}
 		int intersection;
 		for (int i = 0; i < bayas.size(); ++i){
 			if(player.getGlobalBounds().intersects(bayas[i].second.getGlobalBounds())) intersection = 1;
 			else if (player2.getGlobalBounds().intersects(bayas[i].second.getGlobalBounds())) intersection = 2;
 			else intersection = 0;
-
+			bool borra = true;
 			if (intersection > 0){
 				if (bayas[i].first == 0){ //es fugaesfera
 					if (intersection == 1){
@@ -358,12 +515,14 @@ int main(){
 					}
 				}
 				else if (bayas[i].first == 1){ //es baya meloc
-					++melocCount;
-					std::cout<< melocCount << std::endl;
+					if(intersection == 1) ++melocCount;
+					else ++melocCount2;
+					std::cout<< melocCount << "-P1-------------P2-" << melocCount2 << std::endl;
 				}
 				else if (bayas[i].first == 2){ //es baya zreza
-					melocCount = melocCount + 5;
-					std::cout<< melocCount << std::endl;
+					if(intersection == 1) melocCount += 5;
+					else melocCount2 += 5;
+					std::cout<< melocCount << "-P1-------------P2-" << melocCount2 << std::endl;
 				}
 				else if (bayas[i].first == 3){ //es pokeball
 					if (intersection == 1){
@@ -385,18 +544,38 @@ int main(){
 					}
 				}
 				else if (bayas[i].first == 4){ //es piedra trueno
-					raichu = true;
-					if(!tplayer.loadFromFile("raichu.png")) std::cout << "raichu Not Loaded " << std::endl;
+					if (intersection == 1){
+						raichu = true;
+						if(!tplayer.loadFromFile("raichu.png")) std::cout << "raichu Not Loaded " << std::endl;
 						spriteSize.x = tplayer.getSize().x/4;
 						spriteSize.y = tplayer.getSize().y/4;
 						distx = spriteSize.x/4, disty = spriteSize.y/4;
+					}
+					else borra = false;
 				}
-				bayas.erase(bayas.begin()+i);
+				if (borra) bayas.erase(bayas.begin()+i);
 			}
 			else window.draw(bayas[i].second);
 		}
+		if (shoot) window.draw(shot);
+		if (shoot2) window.draw(shot2);
 		window.draw(player);
 		window.draw(player2);
 		window.display();
+		bool final = false;
+		if (melocCount >= 20){
+			std::cout << "PLAYER 1 WON!" << std::endl;
+			final = true;
+		}
+		else if (melocCount2 >= 20){
+			std::cout << "PLAYER 2 WON!" << std::endl;
+			final = true;
+		}
+		if (final){
+			raichu = poke = poke2 = raichu2 = speedup = speedup2 = false;
+			melocCount = melocCount2 = 0;
+			bayas.erase(bayas.begin(), bayas.end());
+			final = false;
+		}
 	}
 }
