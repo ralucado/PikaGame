@@ -2,10 +2,35 @@
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
+#include <sstream>
 #include <vector>
+#include <string>
 #include <cmath>
 #include <stdlib.h>
 #include <time.h>
+
+void end_game(std::string s, sf::Vector2f pos, sf::RenderWindow& window){
+	sf::Clock contador;
+	sf::Font font;
+	sf::Text text;
+	if(!font.loadFromFile("FreeMono.ttf")) std::cout << "Could not load font" << std::endl;
+	text.setFont(font); 
+	text.setString(s); 
+	text.setCharacterSize(50);
+	text.setColor(sf::Color::Black);
+	text.setPosition(pos.x/4, pos.y/2);
+	window.draw(text);
+	window.display();
+	while(contador.getElapsedTime().asSeconds() <= 1.5){
+		
+	}
+}
+
+std::string numToString(int num){
+	std::ostringstream convert;
+	convert << num;
+	return convert.str();
+}
 
 bool isWhite(sf::Image& image, float px, float py){
 	return image.getPixel(px, py) == sf::Color::White;
@@ -26,12 +51,15 @@ int main(){
 	sf::Vector2f shotSize(462,23);
 	sf::Vector2f melocSize(16,14);
 	sf::Vector2f zumoSize(14,14);
+	sf::Vector2f backgroundSize(639, 480);
 	sf::Vector2i spriteSource(0,down);
 	sf::Vector2i spriteSource2(0,down);
 	sf::Vector2f originalSpriteSize(0,0);
 	sf::Vector2f originalSpriteSize2(0,0);
 	sf::Vector2f playerPosition(350,280);
 	sf::Vector2f playerPosition2(280,350);
+	sf::Vector2f text1pos(60,370);
+	sf::Vector2f text2pos(50,395);
 	std::vector<std::pair<int, sf::Sprite> > bayas;
 	//SFML OBJECTS
 	sf::Event event;
@@ -39,6 +67,8 @@ int main(){
 	sf::Image image;
 	sf::Sprite player, player2, background, meloc, zumo, stone, pokeball, zreza, shot, shot2;
 	sf::Texture tplayer, tplayer2, tbackground, tmeloc, tzumo, tstone, tpokeball, tzreza, tshot;
+	sf::Font FreeMono;
+	sf::Text text1, text2;
 
 	//LOAD TEXTURES
 	if(!image.loadFromFile("map.png")) std::cout << "collision map not loaded" << std::endl;
@@ -51,6 +81,12 @@ int main(){
 	if(!tplayer.loadFromFile("pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
 	if(!tplayer2.loadFromFile("pikachu.png")) std::cout << "personatge2 Not Loaded " << std::endl;
 	if(!tshot.loadFromFile("shot.png")) std::cout << "shot Not Loaded " << std::endl;
+	if(!FreeMono.loadFromFile("FreeMono.ttf")) std::cout << "Could not load font" << std::endl;
+	text1.setFont(FreeMono); text2.setFont(FreeMono);
+	text1.setCharacterSize(15); text2.setCharacterSize(15);
+	text1.setColor(sf::Color(255, 145, 0)); text2.setColor(sf::Color::Yellow);
+	text1.setPosition(text1pos);
+	text2.setPosition(text2pos);
 
 	spriteSize.x = originalSpriteSize.x = tplayer.getSize().x/4;
 	spriteSize.y = originalSpriteSize.y = tplayer.getSize().y/4;
@@ -70,6 +106,7 @@ int main(){
 	player.setTexture(tplayer);
 	player.setPosition(playerPosition);
 
+
 	player2.setTexture(tplayer2);
 	player2.setPosition(playerPosition2);
 
@@ -82,7 +119,7 @@ int main(){
 
 	//CREATE THE WINDOW
 	direction lastDir = down, lastDir2 = down;
-	sf::RenderWindow window(sf::VideoMode(639, 480), "Pika!");
+	sf::RenderWindow window(sf::VideoMode(backgroundSize.x,backgroundSize.y), "Pika!");
 	std::cout << "Howdy fellow trainer! Here's your chance to help Pikachu" << std::endl
 	<< "collect all the Pechaberries he can get!" << std::endl
 	<< "If you get the chance to collect a Mobile Orb, you'll be able to move faster!" << std::endl
@@ -256,6 +293,7 @@ int main(){
 
 		sf::Vector2f shotPosition = playerPosition; //cambiar
 		sf::Vector2f shotPosition2 = playerPosition2; //cambiar
+
 
 		float rotation, rotation2/*, shotdistx, shotdisty*/;
 		/*shotdistx = playerPosition.x;
@@ -559,20 +597,31 @@ int main(){
 		}
 		if (shoot) window.draw(shot);
 		if (shoot2) window.draw(shot2);
+		std::string puntuacion, puntuacion2;
+		puntuacion = numToString(melocCount);
+		puntuacion2 = numToString(melocCount2);
+		text1.setString("Player 1: " + puntuacion);
+		text2.setString("Player 2: " + puntuacion2);
 		window.draw(player);
 		window.draw(player2);
+		window.draw(text1);
+		window.draw(text2);
 		window.display();
 		bool final = false;
 		if (melocCount >= 20){
 			std::cout << "PLAYER 1 WON!" << std::endl;
+			end_game("Player 1 won!", backgroundSize, window);
 			final = true;
 		}
 		else if (melocCount2 >= 20){
 			std::cout << "PLAYER 2 WON!" << std::endl;
+			end_game("Player 2 won!", backgroundSize, window);
 			final = true;
 		}
 		if (final){
-			raichu = poke = poke2 = raichu2 = speedup = speedup2 = false;
+			raichu = raichu2 = speedup = speedup2 = false;
+			poke = poke2 = false;
+			shoot = shoot2 = false;
 			melocCount = melocCount2 = 0;
 			bayas.erase(bayas.begin(), bayas.end());
 			final = false;
