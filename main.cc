@@ -13,7 +13,7 @@ void end_game(std::string s, sf::Vector2f pos, sf::RenderWindow& window){
 	sf::Clock contador;
 	sf::Font font;
 	sf::Text text;
-	if(!font.loadFromFile("FreeMono.ttf")) std::cout << "Could not load font" << std::endl;
+	if(!font.loadFromFile("Fonts/FreeMono.ttf")) std::cout << "Could not load font" << std::endl;
 	text.setFont(font); 
 	text.setString(s); 
 	text.setCharacterSize(50);
@@ -71,17 +71,17 @@ int main(){
 	sf::Text text1, text2;
 
 	//LOAD TEXTURES
-	if(!image.loadFromFile("map.png")) std::cout << "collision map not loaded" << std::endl;
- 	if(!tzumo.loadFromFile("zumo.png")) std::cout << "zumo texture Not Loaded " << std::endl;
-	if(!tmeloc.loadFromFile("meloc.png")) std::cout << "meloc texture Not Loaded " << std::endl;
-	if(!tzreza.loadFromFile("zreza.png")) std::cout << "zreza texture Not Loaded " << std::endl;
-	if(!tstone.loadFromFile("piedratrueno.png")) std::cout << "stone texture Not Loaded " << std::endl;
-	if(!tpokeball.loadFromFile("poke.png")) std::cout << "poke texture Not Loaded " << std::endl;
-	if(!tbackground.loadFromFile("ground.png")) std::cout << "background texture Not Loaded " << std::endl;
-	if(!tplayer.loadFromFile("pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
-	if(!tplayer2.loadFromFile("pikachu.png")) std::cout << "personatge2 Not Loaded " << std::endl;
-	if(!tshot.loadFromFile("shot.png")) std::cout << "shot Not Loaded " << std::endl;
-	if(!FreeMono.loadFromFile("FreeMono.ttf")) std::cout << "Could not load font" << std::endl;
+	if(!image.loadFromFile("Images/map.png")) std::cout << "collision map not loaded" << std::endl;
+ 	if(!tzumo.loadFromFile("Images/zumo.png")) std::cout << "zumo texture Not Loaded " << std::endl;
+	if(!tmeloc.loadFromFile("Images/meloc.png")) std::cout << "meloc texture Not Loaded " << std::endl;
+	if(!tzreza.loadFromFile("Images/zreza.png")) std::cout << "zreza texture Not Loaded " << std::endl;
+	if(!tstone.loadFromFile("Images/piedratrueno.png")) std::cout << "stone texture Not Loaded " << std::endl;
+	if(!tpokeball.loadFromFile("Images/poke.png")) std::cout << "poke texture Not Loaded " << std::endl;
+	if(!tbackground.loadFromFile("Images/ground.png")) std::cout << "background texture Not Loaded " << std::endl;
+	if(!tplayer.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
+	if(!tplayer2.loadFromFile("Images/pikachu.png")) std::cout << "personatge2 Not Loaded " << std::endl;
+	if(!tshot.loadFromFile("Images/shot.png")) std::cout << "shot Not Loaded " << std::endl;
+	if(!FreeMono.loadFromFile("Fonts/FreeMono.ttf")) std::cout << "Could not load font" << std::endl;
 	text1.setFont(FreeMono); text2.setFont(FreeMono);
 	text1.setCharacterSize(15); text2.setCharacterSize(15);
 	text1.setColor(sf::Color(255, 145, 0)); text2.setColor(sf::Color::Yellow);
@@ -174,13 +174,13 @@ int main(){
 		}	
 		if (poke and pokeClock.getElapsedTime().asSeconds() >= 5){
 			poke = false;
-			if(!tplayer.loadFromFile("pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
+			if(!tplayer.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
 			spriteSize.x = originalSpriteSize.x = tplayer.getSize().x/4;
 			spriteSize.y = originalSpriteSize.y = tplayer.getSize().y/4;
 		}
 		if (poke2 and poke2Clock.getElapsedTime().asSeconds() >= 5){
 			poke2 = false;
-			if(!tplayer2.loadFromFile("pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
+			if(!tplayer2.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
 			spriteSize2.x = originalSpriteSize.x = tplayer2.getSize().x/4;
 			spriteSize2.y = originalSpriteSize.y = tplayer2.getSize().y/4;
 		}
@@ -566,7 +566,7 @@ int main(){
 					if (intersection == 1){
 						poke = true;
 						raichu = false;
-						if(!tplayer.loadFromFile("pokeball.png")) std::cout << "pokeball Not Loaded " << std::endl;
+						if(!tplayer.loadFromFile("Images/pokeball.png")) std::cout << "pokeball Not Loaded " << std::endl;
 						spriteSize.x = 14; 
 						spriteSize.y = 14;
 						distx = spriteSize.x/4, disty = spriteSize.y/4;
@@ -584,7 +584,7 @@ int main(){
 				else if (bayas[i].first == 4){ //es piedra trueno
 					if (intersection == 1){
 						raichu = true;
-						if(!tplayer.loadFromFile("raichu.png")) std::cout << "raichu Not Loaded " << std::endl;
+						if(!tplayer.loadFromFile("Images/raichu.png")) std::cout << "raichu Not Loaded " << std::endl;
 						spriteSize.x = tplayer.getSize().x/4;
 						spriteSize.y = tplayer.getSize().y/4;
 						distx = spriteSize.x/4, disty = spriteSize.y/4;
