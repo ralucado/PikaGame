@@ -79,7 +79,7 @@ int main(){
 	if(!tpokeball.loadFromFile("Images/poke.png")) std::cout << "poke texture Not Loaded " << std::endl;
 	if(!tbackground.loadFromFile("Images/ground.png")) std::cout << "background texture Not Loaded " << std::endl;
 	if(!tplayer.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
-	if(!tplayer2.loadFromFile("Images/pikachu.png")) std::cout << "personatge2 Not Loaded " << std::endl;
+	if(!tplayer2.loadFromFile("Images/pikachu2.png")) std::cout << "personatge2 Not Loaded " << std::endl;
 	if(!tshot.loadFromFile("Images/shot.png")) std::cout << "shot Not Loaded " << std::endl;
 	if(!FreeMono.loadFromFile("Fonts/FreeMono.ttf")) std::cout << "Could not load font" << std::endl;
 	text1.setFont(FreeMono); text2.setFont(FreeMono);
@@ -569,7 +569,7 @@ int main(){
 					}
 					else if (intersection == 2){
 						raichu = true;
-						if(!tplayer2.loadFromFile("Images/raichu.png")) std::cout << "raichu Not Loaded " << std::endl;
+						if(!tplayer2.loadFromFile("Images/raichu2.png")) std::cout << "raichu Not Loaded " << std::endl;
 						spriteSize2.x = tplayer2.getSize().x/4;
 						spriteSize2.y = tplayer2.getSize().y/4;
 						distx2 = spriteSize2.x/4, disty2 = spriteSize2.y/4;
@@ -617,7 +617,7 @@ int main(){
             poke2 = false;
             std::cout << "vaig a carregar el personatge 2.... " << std::endl;
             std::cout << "poke2 val" << poke2 << std::endl;
-            if(!tplayer2.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
+            if(!tplayer2.loadFromFile("Images/pikachu2.png")) std::cout << "personatge Not Loaded " << std::endl;
             spriteSize2.x = originalSpriteSize.x = tplayer2.getSize().x/4;
             spriteSize2.y = originalSpriteSize.y = tplayer2.getSize().y/4;
         }
