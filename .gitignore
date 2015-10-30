@@ -7,7 +7,7 @@
 # Precompiled Headers
 *.gch
 *.pch
-
+PikaGame.*
 # Compiled Dynamic libraries
 *.so
 *.dylib

@@ -48,7 +48,7 @@ int main(){
 	//'VECTOR2's
 	sf::Vector2f spriteSize(28,28);
 	sf::Vector2f spriteSize2(28,28);
-	sf::Vector2f shotSize(462,23);
+	sf::Vector2f shotSize(639,23);
 	sf::Vector2f melocSize(16,14);
 	sf::Vector2f zumoSize(14,14);
 	sf::Vector2f backgroundSize(639, 480);
@@ -87,7 +87,7 @@ int main(){
 	text1.setColor(sf::Color(255, 145, 0)); text2.setColor(sf::Color::Yellow);
 	text1.setPosition(text1pos);
 	text2.setPosition(text2pos);
-
+	int piedras = 0;
 	spriteSize.x = originalSpriteSize.x = tplayer.getSize().x/4;
 	spriteSize.y = originalSpriteSize.y = tplayer.getSize().y/4;
 
@@ -127,12 +127,15 @@ int main(){
 	<< "Be careful with Pokeballs, they'll slow you down, you may want to avoid them." << std::endl
 	<< "Although no one has seen it yet, some say a mighty stone could appear" << std::endl
 	<< "and turn Pikachu into an even more powerfull creature. Keep your eyes wide open." << std::endl
-	<< "Your score will appear down here, good luck!" << std::endl;
- 	//descomentar4music
-	/*sf::Music music;
-	if (!music.openFromFile("pikaGirl.wav")) std::cout << "couldnt load music" << std::endl; // error
-	music.play();*/
-
+	<< "Your score will appear down here, good luck!" << std::endl;/*
+ 	sf::Music music;
+    if (!music.openFromFile("SOUNDS/pikaGirl.wav")) {
+        std::cout << "music failed" << std::endl;
+    }
+    music.setLoop(true);         // make it loop
+    // Play it
+    music.play();
+*/
 	//GAME LOOP
 	while(window.isOpen()){
 
@@ -172,31 +175,6 @@ int main(){
 					break;
 			}
 		}	
-		if (poke and pokeClock.getElapsedTime().asSeconds() >= 5){
-			poke = false;
-			if(!tplayer.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
-			spriteSize.x = originalSpriteSize.x = tplayer.getSize().x/4;
-			spriteSize.y = originalSpriteSize.y = tplayer.getSize().y/4;
-		}
-		if (poke2 and poke2Clock.getElapsedTime().asSeconds() >= 5){
-			poke2 = false;
-			if(!tplayer2.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
-			spriteSize2.x = originalSpriteSize.x = tplayer2.getSize().x/4;
-			spriteSize2.y = originalSpriteSize.y = tplayer2.getSize().y/4;
-		}
-		if (par and parClock.getElapsedTime().asSeconds() >= 3) par = false;
-		if (par2 and parClock.getElapsedTime().asSeconds() >= 3) par2 = false;
-		if (zumoClock.getElapsedTime().asSeconds() >= 10) speedup = false;
-		if (zumo2Clock.getElapsedTime().asSeconds() >= 10) speedup2 = false;
-
-		if(poke or par) speed = 20;
-		else if (speedup) speed = 220;
-		else if(raichu) speed = 150;
-		else speed = 100;
-
-		if(poke2 or par2) speed2 = 20;
-		else if (speedup2) speed2 = 220;
-		else speed2 = 100;
 
 		//Deltatime 
 		deltatime = deltaClock.restart().asSeconds();
@@ -495,7 +473,7 @@ int main(){
 			}
 
 
-			if (spawn%42 == 0){
+			if (rand() < 0.1 * ((double)RAND_MAX + 1.0)){
 				float zrezaX = rand()%639, zrezaY = rand()%480;
 				while (!isWhite(image, zrezaX, zrezaY)){
 					zrezaX = rand()%639;
@@ -507,7 +485,7 @@ int main(){
 				bayas.push_back(std::make_pair(2,zreza));
 			}
 
-			if (spawn%50 == 0){
+            if (rand() < 0.02 * ((double)RAND_MAX + 1.0)){
 				float pokeballX = rand()%639, pokeballY = rand()%480;
 				while (!isWhite(image, pokeballX, pokeballY)){
 					pokeballX = rand()%639;
@@ -519,8 +497,8 @@ int main(){
 				bayas.push_back(std::make_pair(3,pokeball));
 			}
 
-			if (spawn%70 == 0 and raichu == false){
-				raichu = true;
+			if ((rand() < 0.0001 * ((double)RAND_MAX + 1.0)) and raichu == false and piedras < 2){
+				++piedras;
 				float stoneX = rand()%639, stoneY = rand()%480;
 				while (!isWhite(image, stoneX, stoneY)){
 					stoneX = rand()%639;
@@ -574,7 +552,7 @@ int main(){
 					}
 					else {
 						poke2 = true;
-						if(!tplayer2.loadFromFile("pokeball.png")) std::cout << "pokeball Not Loaded " << std::endl;
+                        if(!tplayer2.loadFromFile("Images/pokeball.png")) std::cout << "pokeball Not Loaded " << std::endl;
 						spriteSize2.x = 14; 
 						spriteSize2.y = 14;
 						distx2 = spriteSize2.x/4, disty2 = spriteSize2.y/4;
@@ -588,6 +566,13 @@ int main(){
 						spriteSize.x = tplayer.getSize().x/4;
 						spriteSize.y = tplayer.getSize().y/4;
 						distx = spriteSize.x/4, disty = spriteSize.y/4;
+					}
+					else if (intersection == 2){
+						raichu = true;
+						if(!tplayer2.loadFromFile("Images/raichu.png")) std::cout << "raichu Not Loaded " << std::endl;
+						spriteSize2.x = tplayer2.getSize().x/4;
+						spriteSize2.y = tplayer2.getSize().y/4;
+						distx2 = spriteSize2.x/4, disty2 = spriteSize2.y/4;
 					}
 					else borra = false;
 				}
@@ -608,7 +593,7 @@ int main(){
 		window.draw(text2);
 		window.display();
 		bool final = false;
-		if (melocCount >= 20){
+        if (melocCount >= 2){
 			std::cout << "PLAYER 1 WON!" << std::endl;
 			end_game("Player 1 won!", backgroundSize, window);
 			final = true;
@@ -617,7 +602,26 @@ int main(){
 			std::cout << "PLAYER 2 WON!" << std::endl;
 			end_game("Player 2 won!", backgroundSize, window);
 			final = true;
-		}
+        }
+
+        if (final or (poke and pokeClock.getElapsedTime().asSeconds() >= 5)){
+            poke = false;
+            std::cout << "vaig a carregar el personatge 1.... " << std::endl;
+            std::cout << "poke val" << poke << std::endl;
+            if(raichu) if(!tplayer.loadFromFile("Images/raichu.png")) std::cout << "personatge Not Loaded " << std::endl;
+            else{ if(!tplayer.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;}
+            spriteSize.x = originalSpriteSize.x = tplayer.getSize().x/4;
+            spriteSize.y = originalSpriteSize.y = tplayer.getSize().y/4;
+        }
+        if (final or (poke2 and poke2Clock.getElapsedTime().asSeconds() >= 5)){
+            poke2 = false;
+            std::cout << "vaig a carregar el personatge 2.... " << std::endl;
+            std::cout << "poke2 val" << poke2 << std::endl;
+            if(!tplayer2.loadFromFile("Images/pikachu.png")) std::cout << "personatge Not Loaded " << std::endl;
+            spriteSize2.x = originalSpriteSize.x = tplayer2.getSize().x/4;
+            spriteSize2.y = originalSpriteSize.y = tplayer2.getSize().y/4;
+        }
+
 		if (final){
 			raichu = raichu2 = speedup = speedup2 = false;
 			poke = poke2 = false;
@@ -625,6 +629,24 @@ int main(){
 			melocCount = melocCount2 = 0;
 			bayas.erase(bayas.begin(), bayas.end());
 			final = false;
+            player2.setPosition(playerPosition2);
+            player.setPosition(playerPosition);
+            std::cout << "posicions posades" << std::endl;
 		}
+
+        if (par and parClock.getElapsedTime().asSeconds() >= 3) par = false;
+        if (par2 and parClock.getElapsedTime().asSeconds() >= 3) par2 = false;
+        if (zumoClock.getElapsedTime().asSeconds() >= 10) speedup = false;
+        if (zumo2Clock.getElapsedTime().asSeconds() >= 10) speedup2 = false;
+
+        if(poke or par) speed = 20;
+        else if (speedup) speed = 220;
+        else if(raichu) speed = 150;
+        else speed = 100;
+
+        if(poke2 or par2) speed2 = 20;
+        else if (speedup2) speed2 = 220;
+        else speed2 = 100;
+
 	}
 }
