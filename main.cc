@@ -593,12 +593,12 @@ int main(){
 		window.draw(text2);
 		window.display();
 		bool final = false;
-        if (melocCount >= 2){
+        if (melocCount >= 10){
 			std::cout << "PLAYER 1 WON!" << std::endl;
 			end_game("Player 1 won!", backgroundSize, window);
 			final = true;
 		}
-		else if (melocCount2 >= 20){
+		else if (melocCount2 >= 10){
 			std::cout << "PLAYER 2 WON!" << std::endl;
 			end_game("Player 2 won!", backgroundSize, window);
 			final = true;
