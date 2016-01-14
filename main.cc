@@ -127,15 +127,15 @@ int main(){
 	<< "Be careful with Pokeballs, they'll slow you down, you may want to avoid them." << std::endl
 	<< "Although no one has seen it yet, some say a mighty stone could appear" << std::endl
 	<< "and turn Pikachu into an even more powerfull creature. Keep your eyes wide open." << std::endl
-	<< "Your score will appear down here, good luck!" << std::endl;/*
+	<< "Your score will appear down here, good luck!" << std::endl;
  	sf::Music music;
-    if (!music.openFromFile("SOUNDS/pikaGirl.wav")) {
+    if (!music.openFromFile("Sounds/pikaGirl.wav")) {
         std::cout << "music failed" << std::endl;
     }
     music.setLoop(true);         // make it loop
     // Play it
     music.play();
-*/
+
 	//GAME LOOP
 	while(window.isOpen()){
 
