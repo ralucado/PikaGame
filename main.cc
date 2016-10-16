@@ -129,7 +129,7 @@ int main(){
 	<< "and turn Pikachu into an even more powerfull creature. Keep your eyes wide open." << std::endl
 	<< "Your score will appear down here, good luck!" << std::endl;
  	sf::Music music;
-    if (!music.openFromFile("Sounds/pikaGirl.wav")) {
+    if (!music.openFromFile("Sounds/pikaGirl.ogg")) {
         std::cout << "music failed" << std::endl;
     }
     music.setLoop(true);         // make it loop
